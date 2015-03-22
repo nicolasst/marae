@@ -23,7 +23,8 @@ public class MarkovChain {
 		transitionMatrix = new Matrix<>(Double.class, stateNames.size());
 	}
 	
-	public void generateSequence(int initialStateIndex, int size, Random random) {
+	public List<Integer> generateSequence(int initialStateIndex, int size, Random random) {
+		List<Integer> sequence = new ArrayList<>(size);
 		List<Double> nextStateProb = new ArrayList<>();
 		int lastStateIndex = initialStateIndex;
 		//
@@ -39,8 +40,10 @@ public class MarkovChain {
 			//
 			System.out.println("step "+stepi+" : "+stateNames.get(lastStateIndex)+" -> "+stateNames.get(nextStateIndex));
 			//
+			sequence.add(nextStateIndex);
 			lastStateIndex = nextStateIndex;
 		}
+		return sequence;
 	}
 	
 	
