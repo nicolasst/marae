@@ -5,13 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import marae.gm.markovchain.MarkovChain;
-import moorea.maths.lambda.FunctionalAlgorithms;
 import moorea.maths.matrix.Matrix;
-import moorea.maths.matrix.MatrixAlgorithms;
 import moorea.maths.matrix.MatrixFactory;
 import moorea.maths.random.ProbabilityDistribution;
-import moorea.misc.Tupple2;
+import moorea.misc.Tuple2;
 
 public class HMM {
 
@@ -45,14 +42,14 @@ public class HMM {
 		MatrixFactory.fillMatrix(initialStateProbability, initialStateValues.iterator());
 	}
 
-	public Tupple2<List<Integer>,List<Integer>> generateSequence(int size, Random random) {
+	public Tuple2<List<Integer>,List<Integer>> generateSequence(int size, Random random) {
 		double p = random.nextDouble();
 		int initialState = ProbabilityDistribution.drawObjectIndexFromDistribution(Arrays.asList(initialStateProbability.values[0]), p);
 		return generateSequence(initialState, size, random);
 	}
 
 	
-	public Tupple2<List<Integer>,List<Integer>> generateSequence(int initialStateIndex, int size, Random random) {
+	public Tuple2<List<Integer>,List<Integer>> generateSequence(int initialStateIndex, int size, Random random) {
 		List<Integer> sequenceState = new ArrayList<>(size);
 		List<Integer> sequenceObs = new ArrayList<>(size);
 		List<Double> nextStateProb = new ArrayList<>();
@@ -98,7 +95,7 @@ public class HMM {
 			sequenceObs.add(nextObservationIndex);
 			lastStateIndex = nextStateIndex;
 		}
-		return new Tupple2(sequenceState,sequenceObs);
+		return new Tuple2(sequenceState,sequenceObs);
 	}
 	
 	public List<Integer> vitterbi(List<Integer> observations) {
@@ -170,11 +167,6 @@ public class HMM {
 	}
 	
 	
-	
-	
-	/* Example from Wikipedia
-	 */
-	
 	public static void main(String[] args) {
 		
 		HMM hamsterHMM = new HMM(
@@ -204,6 +196,21 @@ public class HMM {
 				Arrays.asList(
 						0.6, 0.4)
 				);
+		
+		HMM happinessHMM = new HMM(
+				Arrays.asList("work", "holiday"),
+				Arrays.asList("relax", "tense"),
+				Arrays.asList(
+						0.9, 0.1,
+						0.9, 0.1),
+				Arrays.asList(
+						0.9, 0.1,
+						0.9, 0.1),
+				Arrays.asList(
+						0.9, 0.1)
+				);
+		
+		//
 		
 		List<String> states = new ArrayList<>();
 		
@@ -236,7 +243,11 @@ public class HMM {
 		
 		MatrixFactory.fillMatrix(hmm.initialStateProbability, initialStateValues.iterator());
 
-		Tupple2<List<Integer>,List<Integer>> seq = hmm.generateSequence(50, random);
+		//
+		
+		hmm = diseaseHMM;
+		
+		Tuple2<List<Integer>,List<Integer>> seq = hmm.generateSequence(50, random);
 		
 		System.out.println("seq obs   : "+seq.second);
 		System.out.println("seq states: "+seq.first);

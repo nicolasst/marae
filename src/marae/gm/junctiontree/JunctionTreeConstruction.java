@@ -39,7 +39,7 @@ import moorea.maths.random.UniformRandomIntegerGenerator;
 import moorea.misc.AdHocMapEvalComparator;
 import moorea.misc.AdHocMapEvalIntComparator;
 import moorea.misc.BidiMap;
-import moorea.misc.Tupple2;
+import moorea.misc.Tuple2;
 
 /**
  * Contains all the methods to build a junction tree from a list of function.
@@ -59,11 +59,11 @@ public class JunctionTreeConstruction {
 	 * TODO parametrise the variable elimination heuristic.
 	 */
 	
-	public static <K extends Node> Tupple2<Graph<K>,List<K>> triangulateGraph(Graph<K> g) {
+	public static <K extends Node> Tuple2<Graph<K>,List<K>> triangulateGraph(Graph<K> g) {
 		return triangulateGraph(g,  new NodeComparatorMCS());
 	}
 
-	public static <K extends Node> Tupple2<Graph<K>,List<K>> triangulateGraph(Graph<K> g, EliminationHeuristic eh) {
+	public static <K extends Node> Tuple2<Graph<K>,List<K>> triangulateGraph(Graph<K> g, EliminationHeuristic eh) {
 		//Graph<SimpleNode> gt = Tupple2.getFirst(GraphFactory.simpleGraphFactory.createGraphCopyingStructure(g));
 		
 		Graph gt = g;
@@ -114,7 +114,7 @@ public class JunctionTreeConstruction {
 			}
 		}
 		
-		Tupple2<Graph<K>,List<K>> res = new Tupple2(gt,eliminationOrder);
+		Tuple2<Graph<K>,List<K>> res = new Tuple2(gt,eliminationOrder);
 		
 		return res;
 	}
@@ -277,7 +277,7 @@ public class JunctionTreeConstruction {
 		//
 		System.out.println("triangulation");
 		
-		Tupple2<Graph<K>,List<K>> resTriangulation;
+		Tuple2<Graph<K>,List<K>> resTriangulation;
 		
 		resTriangulation = triangulateGraph(markovGraph, eh);
 
