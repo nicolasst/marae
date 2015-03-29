@@ -34,11 +34,8 @@ public abstract class GMNode<V, K> extends SimpleNode<GMNode<V, K>> {
 	
 	// current state
 	protected K information;
-
-	// messages
-	protected List<K> inMessages;
-	protected List<K> outMessages;
 	
+	// messages
 	protected Map<GMNode<V, K>, K> receivedMessages;
 
 	// pre-allocated functions
@@ -47,7 +44,7 @@ public abstract class GMNode<V, K> extends SimpleNode<GMNode<V, K>> {
 	public GMNode(Integer id) {
 		super(id);
 		subFunctions = new LinkedList<>();
-		inMessages = new LinkedList<>();
+		//inMessages = new LinkedList<>();
 		receivedMessages = new HashMap<>();
 	}
 

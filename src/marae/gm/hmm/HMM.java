@@ -7,6 +7,7 @@ import java.util.Random;
 
 import moorea.maths.matrix.Matrix;
 import moorea.maths.matrix.MatrixFactory;
+import moorea.maths.objects.DiscreteVariable;
 import moorea.maths.random.ProbabilityDistribution;
 import moorea.misc.Tuple2;
 
@@ -166,6 +167,76 @@ public class HMM {
 		return decodedStateSequence;
 	}
 	
+	
+	public List<Integer> vitterbiClique(List<Integer> observations) {
+		Matrix<Double> T1 = new Matrix<>(Double.class, stateNames.size(), observations.size());
+		Matrix<Integer> T2 = new Matrix<>(Integer.class, stateNames.size(), observations.size());
+		int size = observations.size();
+		//
+		
+		// pi: initial probability
+		// A: transition matrix of size K*K
+		// B: observation matrix of size K*N
+		// Y: observation sequence of length size
+		// X: hidden vector of states (reconstructed by algo)
+		//
+		// for each state si
+		//   T1[i,1] = pi_i * B_i,y1 
+		//   T2[i,1] = 0
+		for (int i = 0; i < stateNames.size(); i++) {
+			T1.values[i][0] = initialStateProbability.values[i][0] * emissionMatrix.values[i][observations.get(0)];
+			T2.values[i][0] = 0;
+		}
+		// for i in 2 .. size
+		//   for each state sj
+		//     T1[j,i] = max_k(T1[k,i-1] * A_k,j * B_j,y_i
+		//     T2[j,i] = arg max_k ..same as above..
+		for (int oiIndex = 1; oiIndex < size; oiIndex++) {
+			int oi = observations.get(oiIndex);
+			//System.out.println("oi "+oi);
+			for (int sj = 0; sj < stateNames.size(); sj++) {
+				//System.out.println("sj "+sj);
+				double maxVal = Double.MIN_VALUE;
+				int indexMaxVal = -1;
+				for (int sk = 0; sk < stateNames.size(); sk++) {
+					//System.out.println("sk "+sk);
+					double val = T1.values[sk][oiIndex-1] * transitionMatrix.values[sk][sj] * emissionMatrix.values[sj][oi];
+					if(val > maxVal) {
+						maxVal = val;
+						indexMaxVal = sk;
+					}
+				}
+				T1.values[sj][oiIndex] = maxVal;
+				T2.values[sj][oiIndex] = indexMaxVal;
+				//System.out.println("MM "+indexMaxVal);
+			}
+		}
+		// z_size = arg max_k T1[k,size]
+		// x_size = s_z_size
+		ArrayList<Integer> decodedStateSequence = new ArrayList<>(size);
+		double maxVal = Double.MIN_VALUE;
+		int indexMaxVal = -1;
+		for (int sk = 0; sk < stateNames.size(); sk++) {
+			double val = T1.values[sk][size-1];
+			if(val > maxVal) {
+				maxVal = val;
+				indexMaxVal = sk;
+			}
+		}
+		decodedStateSequence.add(0,indexMaxVal);
+		// for i in size .. 2
+		//    z_{i-1} = T2|z_i,i]
+		//    x_{i-1} = s_z_{i-1}
+		int zi = indexMaxVal;
+		for (int oiIndex = observations.size()-1; oiIndex >= 1; oiIndex--) {
+			int ziminusone = T2.values[zi][oiIndex];
+			int ximinusone = ziminusone;
+			decodedStateSequence.add(0,ximinusone);
+			zi = ziminusone;
+		}
+		// return x
+		return decodedStateSequence;
+	}
 	
 	public static void main(String[] args) {
 		
